@@ -39,12 +39,9 @@ def load_sheet(sheet_path, sheet_name):
         parsed_url = urlparse(sheet_link)
         file_id = parsed_url.path.split('/')[3]
         df = pd.read_csv(f'https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv')
-        print("путь: ", parsed_url, '\n',file_id)
     else:
         excel_file = Path(sheet_path, sheet_name)
-        print("путь: ", excel_file)
         df = pd.read_excel(excel_file, na_values=' ', sheet_name='Лист1', engine='openpyxl', keep_default_na=False)
-    print(df)
     return df
 
 
