@@ -12,7 +12,7 @@
 
 4. Установите зависимости:
 
-         ```pip install -r requirements.txt ```
+            pip install -r requirements.txt
 
 5. Можете в папке с проектом в файле `.env` задать различные параметры и настройки для вашего проекта:
 
@@ -46,7 +46,9 @@
 
 
 8. Запустите сайт командой:
-      ```python main.py```
+
+         python main.py
+
 8. Следуйте запросам программы.
 
 9. Перейдите на сайт по адресу [http://127.0.0.1:8000](http://127.0.0.1:8000), если в п.5 не указывали свой адрес и порт
@@ -56,7 +58,6 @@
 ## Цели проекта
 
 Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
-https://docs.google.com/spreadsheets/d/1Kr5SIjD0JJ4SkM3ysGUSfTfE9Zw-o6513dAmDM3NxUU/edit?usp=sharing
 
 
 
