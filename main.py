@@ -53,7 +53,7 @@ def load_sheet(sheet_path, sheet_name):
               prompt="введите путь к локальному файлу или вставьте ссылку таблицы Google Sheets",
               default="", required=True,
               help='Путь к файлу: (если в корневой папке проекта - нажми Enter)')
-@click.option('--sheet_name', default="wine.xlsx", prompt="Название файла: ",
+@click.option('--sheet_name', default="по умолчанию  - wine.xlsx", prompt="Название файла: ",
               required=True, help="введите название таблицы")
 def main(sheet_path, sheet_name):
     df = load_sheet(sheet_path, sheet_name)
