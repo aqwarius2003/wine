@@ -3,7 +3,6 @@ import datetime
 from collections import defaultdict
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-import argparse
 import os
 from dotenv import load_dotenv
 import click
@@ -25,37 +24,45 @@ def fetch_year_word(age):
         return 'лет'
 
 
-def create_parser():
-    description = '''Принимает Exel  файл с базой товаров.'''
-    parser = argparse.ArgumentParser(description=description)
-    h = 'Введите путь и название файла с расширением xlsx или xls'
-    parser.add_argument('-f', '--exel_file', help=h, default='wine.xlsx', type=str)
-    return parser
-
-
-def load_sheet(sheet_path, sheet_name):
-    if sheet_path.startswith("https://"):
-        sheet_link = sheet_path
+def load_google_sheet(table_path):
+    try:
+        sheet_link = table_path
         parsed_url = urlparse(sheet_link)
         file_id = parsed_url.path.split('/')[3]
         df = pd.read_csv(f'https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv')
-    else:
-        excel_file = Path(sheet_path, sheet_name)
+        return df
+    except Exception as e:
+        print("Произошла ошибка при загрузке Google таблицы: ", str(e))
+        return
+
+
+def load_local_sheet(table_path):
+    excel_file = Path(table_path)
+    try:
         df = pd.read_excel(excel_file, na_values=' ', sheet_name='Лист1', engine='openpyxl', keep_default_na=False)
-    return df
+        return df
+    except Exception as e:
+        print("Произошла ошибка при загрузке файла: ", str(e))
+        return
 
 
 @click.command()
-@click.option('--sheet_path',
-              prompt="введите путь к локальному файлу или вставьте ссылку таблицы Google Sheets",
-              default="", required=True,
-              help='Путь к файлу: (если в корневой папке проекта - нажми Enter)')
-@click.option('--sheet_name', default="по умолчанию  - wine.xlsx", prompt="Название файла: ",
-              required=True, help="введите название таблицы")
-def main(sheet_path, sheet_name):
-    df = load_sheet(sheet_path, sheet_name)
+@click.option('--table_path',
+              prompt="Введите путь и название локального файла с расширением xlsx "
+                     "или xls или вставьте ссылку таблицы Google Sheets",
+              default="wine.xlsx", required=True,
+              help='Путь к каталогу файла и имя файла')
+def main(table_path):
+    if table_path.startswith("https://"):
+        df = load_google_sheet(table_path)
+    else:
+        df = load_local_sheet(table_path)
 
-    wines = df.to_dict(orient='records')
+    if df:
+        wines = df.to_dict(orient='records')
+    else:
+        print('Убедитесь в правильности пути и перезапустите программу')
+        exit()
 
     wine_categories = defaultdict(list)
 
