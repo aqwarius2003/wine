@@ -58,7 +58,7 @@ def main(table_path):
     else:
         df = load_local_sheet(table_path)
 
-    if df:
+    if df is not None and not df.empty:
         wines = df.to_dict(orient='records')
     else:
         print('Убедитесь в правильности пути и перезапустите программу')
