@@ -7,7 +7,6 @@ import os
 from dotenv import load_dotenv
 import click
 from pathlib import Path
-from urllib.parse import urlparse
 
 FOUNDATION_DATE = 1920
 
@@ -24,18 +23,6 @@ def fetch_year_word(age):
         return 'лет'
 
 
-def load_google_sheet(table_path):
-    try:
-        sheet_link = table_path
-        parsed_url = urlparse(sheet_link)
-        file_id = parsed_url.path.split('/')[3]
-        df = pd.read_csv(f'https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv')
-        return df
-    except Exception as e:
-        print("Произошла ошибка при загрузке Google таблицы: ", str(e))
-        return
-
-
 def load_local_sheet(table_path):
     excel_file = Path(table_path)
     try:
@@ -48,16 +35,11 @@ def load_local_sheet(table_path):
 
 @click.command()
 @click.option('--table_path',
-              prompt="Введите путь и название локального файла с расширением xlsx "
-                     "или xls или вставьте ссылку таблицы Google Sheets",
+              prompt="Введите путь и название локального файла с расширением xlsx или xls",
               default="wine.xlsx", required=True,
               help='Путь к каталогу файла и имя файла')
 def main(table_path):
-    if table_path.startswith("https://"):
-        df = load_google_sheet(table_path)
-    else:
-        df = load_local_sheet(table_path)
-
+    df = load_local_sheet(table_path)
     if df is not None and not df.empty:
         wines = df.to_dict(orient='records')
     else:
