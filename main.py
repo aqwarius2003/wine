@@ -25,12 +25,8 @@ def fetch_year_word(age):
 
 def load_local_sheet(table_path):
     excel_file = Path(table_path)
-    try:
-        df = pd.read_excel(excel_file, na_values=' ', sheet_name='Лист1', engine='openpyxl', keep_default_na=False)
-        return df
-    except Exception as e:
-        print("Произошла ошибка при загрузке файла: ", str(e))
-        return
+    df = pd.read_excel(excel_file, na_values=' ', sheet_name='Лист1', engine='openpyxl', keep_default_na=False)
+    return df
 
 
 @click.command()
@@ -39,7 +35,15 @@ def load_local_sheet(table_path):
               default="wine.xlsx", required=True,
               help='Путь к каталогу файла и имя файла')
 def main(table_path):
-    df = load_local_sheet(table_path)
+    try:
+        df = load_local_sheet(table_path)
+    except FileNotFoundError:
+        print("Файл не найден, проверьте имя или путь к файлу")
+        return
+    except pd.errors.ParserError:
+        print("Ошибка парсинга файла")
+        return
+
     if df is not None and not df.empty:
         wines = df.to_dict(orient='records')
     else:
